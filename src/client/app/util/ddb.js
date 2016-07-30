@@ -27,5 +27,6 @@ export const typeToZeroValue = {
 
 
 export function getAttrType(table, attrName) {
-  return table.AttributeDefinitions.find(k => k.AttributeName == attrName).AttributeType;
+  let attrDefn = table.AttributeDefinitions.find(k => k.AttributeName == attrName)
+  return attrDefn ? attrDefn.AttributeType : null;
 }

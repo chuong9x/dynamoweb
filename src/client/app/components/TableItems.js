@@ -30,7 +30,11 @@ class TableItems extends Component {
       this.setState({items: resp.body.Items})
     });
   }
-  
+
+  onEditItem() {
+
+  }
+
   attrsToType() {
     let attrsToType = {};
     let items = this.state.items;
@@ -53,6 +57,13 @@ class TableItems extends Component {
   renderItem(item, headers, key) {
     return (
       <tr key={key}>
+        <td>
+          <button type="button" className="btn btn-default btn-sm"
+                  onClick={this.onEditItem.bind(this, item)}
+                  aria-label="Edit">
+            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+          </button>
+        </td>
         {headers.map((header, idx) => {
           let attr = item[header];
           let types = Object.keys(attr);
@@ -81,6 +92,7 @@ class TableItems extends Component {
         <table className="table table-sm">
           <thead className="thead-default">
             <tr>
+              <th></th>
               {headers.map(header => <th key={header}>{header}</th>)}
             </tr>
           </thead>

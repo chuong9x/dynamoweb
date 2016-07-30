@@ -17,27 +17,27 @@ class TableOverview extends Component {
     return (
       <div>
         <dl className="dl-horizontal row">
-          <dt className="col-sm-3">Hash Key</dt>
-          <dd className="col-sm-9">{hashKey.AttributeName}
+          <dt>Hash Key</dt>
+          <dd>{hashKey.AttributeName}
             <span className="text-muted"> ({typeToRepr[hashKey.AttributeType]})</span>
           </dd>
-          <dt className="col-sm-3">Range Key</dt>
-          <dd className="col-sm-9">{rangeKey.AttributeName}
+          <dt>Range Key</dt>
+          <dd>{rangeKey.AttributeName}
             <span className="text-muted"> ({typeToRepr[rangeKey.AttributeType]})</span>
           </dd>
           
-          <dt className="col-lg-3">Items</dt>
-          <dd className="col-lg-9">{table.ItemCount}</dd>
-          <dt className="col-lg-3">Size (bytes)</dt>
-          <dd className="col-lg-9">{table.TableSizeBytes}</dd>
+          <dt>Items</dt>
+          <dd>{table.ItemCount}</dd>
+          <dt>Size (bytes)</dt>
+          <dd>{table.TableSizeBytes}</dd>
           
-          <dt className="col-lg-3">Status</dt>
-          <dd className="col-lg-9">{table.TableStatus}</dd>
+          <dt>Status</dt>
+          <dd>{table.TableStatus}</dd>
         
-          <dt className="col-lg-3">Read Throughput</dt>
-          <dd className="col-lg-9">{table.ProvisionedThroughput.ReadCapacityUnits}</dd>
-          <dt className="col-lg-3">Write Throughput</dt>
-          <dd className="col-lg-9">{table.ProvisionedThroughput.WriteCapacityUnits}</dd>
+          <dt>Read Throughput</dt>
+          <dd>{table.ProvisionedThroughput.ReadCapacityUnits}</dd>
+          <dt>Write Throughput</dt>
+          <dd>{table.ProvisionedThroughput.WriteCapacityUnits}</dd>
         </dl>
         
         <h4>Local Secondary Indexes</h4>

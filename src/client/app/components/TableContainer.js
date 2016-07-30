@@ -23,8 +23,8 @@ class TableContainer extends Component {
         </div>
         
         <ul className="nav nav-tabs">
-          <li className="nav-item">
-            <a className="nav-link active" data-toggle="tab" href="#overview" role="tab">Overview</a>
+          <li className="nav-item active">
+            <a className="nav-link" data-toggle="tab" href="#overview" role="tab">Overview</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" data-toggle="tab" href="#items" role="tab">Items</a>

@@ -4,8 +4,11 @@ import http from 'http';
 
 import AWS from 'aws-sdk';
 
+// Default to dynalite
+var DYNALITE_URL = "http://localhost:4567";
+
 var dynamodb = new AWS.DynamoDB({
-  endpoint: "http://localhost:4567",  // dynalite default
+  endpoint: process.env.DYNAMODB_URL || DYNALITE_URL,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   region: "local",
@@ -19,14 +22,24 @@ app.use(bodyParser.json());
 
 app.get('/api/tables', function(req, res) {
   dynamodb.listTables({}, function(err, resp) {
-    res.send(resp.TableNames);
+    if (err) {
+      console.error(err);
+      res.status(500);
+    } else {
+      res.send(resp.TableNames);
+    }
   });
 });
 
 app.get('/api/describe/:tableName', function(req, res) {
   var params = {TableName: req.params.tableName}
   dynamodb.describeTable(params, function(err, resp) {
-    res.send(resp);
+    if (err) {
+      console.error(err);
+      res.status(500);
+    } else {
+      res.send(resp);
+    }
   });
 });
 
@@ -38,7 +51,12 @@ app.get('/api/scan/:tableName', function(req, res) {
   }
   
   dynamodb.scan(params, function(err, resp) {
-    res.send(resp);
+    if (err) {
+      console.error(err);
+      res.status(500);
+    } else {
+      res.send(resp);
+    }
   });
 });
 
@@ -51,8 +69,7 @@ app.put('/api/:tableName', function(req, res) {
   dynamodb.putItem(params, function(err, resp) {
     if (err != null) {
       console.error(err);
-      res.status(err.statusCode)
-      res.send({message: err.message});
+      res.status(500);
     } else {
       res.send(resp);
     }
