@@ -12,7 +12,7 @@ import {typeToZeroValue} from '../util/ddb';
 
 
 class TableAddItem extends Component {
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -20,7 +20,7 @@ class TableAddItem extends Component {
       error: null
     }
   }
-  
+
   initialEditorValue() {
     let initial = {};
     for (let attr in this.props.initialKeys) {
@@ -29,29 +29,43 @@ class TableAddItem extends Component {
         [type]: typeToZeroValue[type]
       };
     };
-    
+
     return JSON.stringify(initial, null, 2);
   }
-  
+
+  componentDidMount() {
+    this.show();
+  }
+
   save() {
     let tableName = this.props.table.TableName;
     request.put('/api/'+tableName)
            .send(this.state.value)
            .set('Content-Type', 'application/json')
            .end((err, resp) => {
-      if (err != null) {
+      if (err) {
         this.setState({error: resp.body.message});
       } else {
         this.setState({error: null});
+        this.close(true);
       }
     });
   }
   
+  show() {
+    $(this.refs.modal).modal('show');
+  }
+
+  close(didAdd = false) {
+    $(this.refs.modal).modal('hide');
+    this.props.onAddFinished(didAdd);
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props || 
+    return nextProps !== this.props ||
            nextState.error != this.state.error;
   }
-  
+
   onEditorChange(value) {
     this.setState({value: value})
   }
@@ -69,11 +83,11 @@ class TableAddItem extends Component {
                  editorProps={{"$blockScrolling": true}}/>
       )
   }
-  
+
   onCloseError() {
     this.setState({error: null});
   }
-  
+
   renderError() {
     if (this.state.error == null) {
       return null;
@@ -91,27 +105,23 @@ class TableAddItem extends Component {
   render() {
     let table = this.props.table;
     return (
-      <div>
-        <button className="btn btn-secondary" data-toggle="modal" data-target="#add-item">Add Item</button>
-        
-        <div className="modal fade" id="add-item" tabIndex="-1" role="dialog" aria-labelledby="add-item" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 className="modal-title">Add Item</h4>
-              </div>
-              <div className="modal-body">
-                {this.renderError()}
-                {this.renderCodeArea()}
-                {/* TODO: add a legend for DDB types */}
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" onClick={this.save.bind(this)}>Save</button>
-              </div>
+      <div className="modal fade" id="add-item" ref="modal" tabIndex="-1" role="dialog" aria-labelledby="add-item" aria-hidden="true">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 className="modal-title">Add Item</h4>
+            </div>
+            <div className="modal-body">
+              {this.renderError()}
+              {this.renderCodeArea()}
+              {/* TODO: add a legend for DDB types */}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={this.close.bind(this)}>Close</button>
+              <button type="button" className="btn btn-primary" onClick={this.save.bind(this)}>Save</button>
             </div>
           </div>
         </div>
@@ -123,7 +133,8 @@ class TableAddItem extends Component {
 
 TableAddItem.propTypes = {
   table: PropTypes.object,
-  initialKeys: PropTypes.object
+  initialKeys: PropTypes.object,
+  onAddFinished: PropTypes.func
 }
 
 export default TableAddItem;

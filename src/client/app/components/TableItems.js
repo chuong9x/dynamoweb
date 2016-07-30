@@ -12,15 +12,16 @@ function mapStateToProps(state) {
 }
 
 class TableItems extends Component {
-  
+
   constructor(props) {
     super(props);
     this.state = {
-      items: []
+      items: [],
+      addItem: null
     }
   }
   
-  componentDidMount() {
+  refreshItems() {
     let tableName = this.props.table.TableName;
     request.get('/api/scan/'+tableName).end((err, resp) => {
       if (err) {
@@ -31,6 +32,10 @@ class TableItems extends Component {
     });
   }
 
+  componentDidMount() {
+    this.refreshItems();
+  }
+
   onEditItem() {
 
   }
@@ -38,7 +43,7 @@ class TableItems extends Component {
   attrsToType() {
     let attrsToType = {};
     let items = this.state.items;
-    
+
     let toCheck = Math.min(items.length, 10);  // Check 10 items for attrs
     let seenAttrs = new Set();
     for (let i=0; i < toCheck; i++) {
@@ -53,7 +58,7 @@ class TableItems extends Component {
     }
     return attrsToType;
   }
-  
+
   renderItem(item, headers, key) {
     return (
       <tr key={key}>
@@ -75,19 +80,42 @@ class TableItems extends Component {
       </tr>
     )
   }
-    
+
+  addItem() {
+      let attrsToType = this.attrsToType();
+      let headers = Object.keys(attrsToType);
+      this.setState({
+        'addItem': <TableAddItem table={this.props.table}
+                                 initialKeys={attrsToType}
+                                 onAddFinished={this.onAddFinished.bind(this)}/>
+      });
+  }
+
+  onAddFinished(didAdd) {
+    if (didAdd) {
+      this.refreshItems();
+    }
+    this.setState({
+      'addItem': null
+    })
+  }
+
   render() {
     let table = this.props.table;
-    
+
     let attrsToType = this.attrsToType();
     let headers = Object.keys(attrsToType);
-  
+
     let i = 0;
     let items = this.state.items.map(item => this.renderItem(item, headers, ++i))
-    
+
     return (
       <div>
-        <TableAddItem table={table} initialKeys={attrsToType}/>
+        <button className="btn btn-secondary" onClick={this.addItem.bind(this)}>
+          Add Item
+        </button>
+        {this.state.addItem}
+
         <br />
         <table className="table table-sm">
           <thead className="thead-default">
