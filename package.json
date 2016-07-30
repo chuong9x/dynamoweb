@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ENV=dev node_modules/.bin/nodemon src/server",
-    "dynamo": "dynalite --path ~/.dynalite"
+    "dynalite": "dynalite --path ~/.dynalite"
   },
   "author": "",
   "license": "ISC",
