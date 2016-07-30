@@ -76,6 +76,22 @@ app.put('/api/:tableName', function(req, res) {
   });
 });
 
+app.delete('/api/:tableName', function(req, res) {
+  var key = req.body;
+  var params = {
+    TableName: req.params.tableName,
+    Key: key
+  }
+  dynamodb.deleteItem(params, function(err, resp) {
+    if (err != null) {
+      console.error(err);
+      res.status(500);
+    } else {
+      res.send(resp);
+    }
+  });
+});
+
 if (process.env.ENV == "dev") {  // webpack
   let webpack = require('webpack')
   let webpackDevMiddleware = require('webpack-dev-middleware');

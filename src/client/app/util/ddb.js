@@ -27,6 +27,15 @@ export const typeToZeroValue = {
 
 
 export function getAttrType(table, attrName) {
+  // TODO: sample items to guess a type if there's not an explicit attr defn
   let attrDefn = table.AttributeDefinitions.find(k => k.AttributeName == attrName)
   return attrDefn ? attrDefn.AttributeType : null;
+}
+
+export function getKeys(table, item) {
+  let result = {};
+  for (let key of table.KeySchema) {
+    result[key.AttributeName] = item[key.AttributeName];
+  }
+  return result;
 }

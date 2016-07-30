@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import request from 'superagent';
 
-import TableAddItem from './TableAddItem';
-import {getAttrType} from '../util/ddb';
+import TableEditItem from './TableEditItem';
+import {getAttrType, getKeys} from '../util/ddb';
 
 function mapStateToProps(state) {
   return {
@@ -17,11 +17,12 @@ class TableItems extends Component {
     super(props);
     this.state = {
       items: [],
-      addItem: null
+      editItem: null
     }
   }
-  
+
   refreshItems() {
+    // TODO: could probably turn semi-transparent during refresh
     let tableName = this.props.table.TableName;
     request.get('/api/scan/'+tableName).end((err, resp) => {
       if (err) {
@@ -36,8 +37,43 @@ class TableItems extends Component {
     this.refreshItems();
   }
 
-  onEditItem() {
+  addItem() {
+      let attrsToType = this.attrsToType();
+      let headers = Object.keys(attrsToType);
+      this.setState({
+        'editItem': <TableEditItem mode="add"
+                                  table={this.props.table}
+                                  initialKeys={attrsToType}
+                                  onFinished={this.onEditFinished.bind(this)}/>
+      });
+  }
 
+  onEditFinished(didEdit) {
+    if (didEdit) {
+      this.refreshItems();
+    }
+    this.setState({
+      'editItem': null
+    })
+  }
+
+  onEditItem(item) {
+    this.setState({
+      'editItem': <TableEditItem mode="edit"
+                                 item={item}
+                                 table={this.props.table}
+                                 onFinished={this.onEditFinished.bind(this)}/>
+    });
+  }
+
+  onDeleteItem(item) {
+    let key = getKeys(this.props.table, item)
+    request.delete('/api/'+this.props.table.TableName).send(key).end((err, resp) => {
+      if (err) {
+        console.error(err);
+      }
+      this.refreshItems();
+    });
   }
 
   attrsToType() {
@@ -77,27 +113,15 @@ class TableItems extends Component {
             <td key={idx}>{value}</td>
           )
         })}
+        <td>
+          <button type="button" className="btn btn-default btn-sm"
+                  onClick={this.onDeleteItem.bind(this, item)}
+                  aria-label="Delete">
+            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          </button>
+        </td>
       </tr>
     )
-  }
-
-  addItem() {
-      let attrsToType = this.attrsToType();
-      let headers = Object.keys(attrsToType);
-      this.setState({
-        'addItem': <TableAddItem table={this.props.table}
-                                 initialKeys={attrsToType}
-                                 onAddFinished={this.onAddFinished.bind(this)}/>
-      });
-  }
-
-  onAddFinished(didAdd) {
-    if (didAdd) {
-      this.refreshItems();
-    }
-    this.setState({
-      'addItem': null
-    })
   }
 
   render() {
@@ -114,14 +138,15 @@ class TableItems extends Component {
         <button className="btn btn-secondary" onClick={this.addItem.bind(this)}>
           Add Item
         </button>
-        {this.state.addItem}
+        {this.state.editItem}
 
         <br />
         <table className="table table-sm">
           <thead className="thead-default">
             <tr>
-              <th></th>
+              <th></th>{/* Edit action */}
               {headers.map(header => <th key={header}>{header}</th>)}
+              <th></th>{/* Delete action */}
             </tr>
           </thead>
           <tbody>

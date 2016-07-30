@@ -11,54 +11,65 @@ import 'brace/theme/github';
 import {typeToZeroValue} from '../util/ddb';
 
 
-class TableAddItem extends Component {
+class TableEditItem extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       value: "",
-      error: null
+      error: null,
+      didEdit: false  // keep track of whether we successfully edited something
     }
   }
 
   initialEditorValue() {
-    let initial = {};
-    for (let attr in this.props.initialKeys) {
-      let type = this.props.initialKeys[attr];
-      initial[attr] = {
-        [type]: typeToZeroValue[type]
+    let initial = null;
+    if (this.props.mode == "edit") {
+      initial = this.props.item;
+    } else {
+      initial = {};
+      for (let attr in this.props.initialKeys) {
+        let type = this.props.initialKeys[attr];
+        initial[attr] = {
+          [type]: typeToZeroValue[type]
+        };
       };
-    };
-
+    }
     return JSON.stringify(initial, null, 2);
   }
 
   componentDidMount() {
+    $(this.refs.modal).on('hide.bs.modal', this.modalClosed.bind(this));
     this.show();
   }
 
+  modalClosed() {
+    this.props.onFinished(this.state.didEdit);
+  }
+
   save() {
+    // TODO: warn about changing a hash/range key?
     let tableName = this.props.table.TableName;
     request.put('/api/'+tableName)
            .send(this.state.value)
            .set('Content-Type', 'application/json')
            .end((err, resp) => {
       if (err) {
+        console.error(err, resp);
         this.setState({error: resp.body.message});
       } else {
-        this.setState({error: null});
-        this.close(true);
+        this.setState({error: null, didEdit: true});
+        this.close();
       }
     });
   }
-  
+
   show() {
     $(this.refs.modal).modal('show');
   }
 
-  close(didAdd = false) {
+  close() {
     $(this.refs.modal).modal('hide');
-    this.props.onAddFinished(didAdd);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -104,6 +115,9 @@ class TableAddItem extends Component {
 
   render() {
     let table = this.props.table;
+    let mode = this.props.mode;
+    let modeTitle = mode.charAt(0).toUpperCase() + mode.slice(1);
+
     return (
       <div className="modal fade" id="add-item" ref="modal" tabIndex="-1" role="dialog" aria-labelledby="add-item" aria-hidden="true">
         <div className="modal-dialog" role="document">
@@ -112,7 +126,7 @@ class TableAddItem extends Component {
               <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
-              <h4 className="modal-title">Add Item</h4>
+              <h4 className="modal-title">{modeTitle} Item</h4>
             </div>
             <div className="modal-body">
               {this.renderError()}
@@ -131,10 +145,12 @@ class TableAddItem extends Component {
 
 }
 
-TableAddItem.propTypes = {
+TableEditItem.propTypes = {
   table: PropTypes.object,
+  mode: PropTypes.string,
   initialKeys: PropTypes.object,
-  onAddFinished: PropTypes.func
+  item: PropTypes.object,
+  onFinished: PropTypes.func
 }
 
-export default TableAddItem;
+export default TableEditItem;
