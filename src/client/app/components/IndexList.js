@@ -9,15 +9,15 @@ function mapStateToProps(state) {
 }
 
 export default class IndexList extends Component {
-  
+
   renderIndex(index) {
     let table = this.props.table;
-    
+
     let hashKeyAttr = index.KeySchema.find(k => k.KeyType == "HASH").AttributeName;
     let hashKey = table.AttributeDefinitions.find(k => k.AttributeName == hashKeyAttr);
     let rangeKeyAttr =  index.KeySchema.find(k => k.KeyType == "RANGE").AttributeName;
     let rangeKey = table.AttributeDefinitions.find(k => k.AttributeName == rangeKeyAttr);
-    
+
     return (
       <tr key={index.IndexName}>
         <th scope="row">{index.IndexName}</th>
@@ -29,7 +29,7 @@ export default class IndexList extends Component {
       </tr>
     )
   }
-  
+
   renderIndexes(indexes) {
     return (
       <table className="table table-hover table-sm">
@@ -49,13 +49,13 @@ export default class IndexList extends Component {
       </table>
     );
   }
-  
+
   renderNoIndexes() {
     return (
       <p className="text-muted">None</p>
     )
   }
-  
+
   render() {
     let indexes = this.props.indexes;
     return indexes ? this.renderIndexes(indexes) : this.renderNoIndexes();

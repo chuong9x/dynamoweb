@@ -11,8 +11,10 @@ class TableOverview extends Component {
 
     let hashKeyAttr = table.KeySchema.find(k => k.KeyType == "HASH").AttributeName;
     let hashKey = table.AttributeDefinitions.find(k => k.AttributeName == hashKeyAttr);
-    let rangeKeyAttr =  table.KeySchema.find(k => k.KeyType == "RANGE").AttributeName;
-    let rangeKey = table.AttributeDefinitions.find(k => k.AttributeName == rangeKeyAttr);
+
+    let rangeKeySchema = table.KeySchema.find(k => k.KeyType == "RANGE");
+    let rangeKeyAttr =  rangeKeySchema ? rangeKeySchema.AttributeName : null;
+    let rangeKey = rangeKeyAttr ? table.AttributeDefinitions.find(k => k.AttributeName == rangeKeyAttr): null;
 
     return (
       <div>
@@ -22,8 +24,16 @@ class TableOverview extends Component {
             <span className="text-muted"> ({typeToRepr[hashKey.AttributeType]})</span>
           </dd>
           <dt className="col-md-3">Range Key</dt>
-          <dd className="col-md-9">{rangeKey.AttributeName}
-            <span className="text-muted"> ({typeToRepr[rangeKey.AttributeType]})</span>
+          <dd className="col-md-9">
+          {(() => {
+            if (rangeKey) {
+              return (
+                {rangeKey}
+                (<span className="text-muted"> ({typeToRepr[rangeKey.AttributeType]})</span>)
+              )
+            }
+            return (<span className="text-muted">None</span>)
+          })()}
           </dd>
 
           <dt className="col-md-3">Items</dt>
