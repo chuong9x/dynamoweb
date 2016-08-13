@@ -68,8 +68,8 @@ app.put('/api/:tableName', function(req, res) {
   }
   dynamodb.putItem(params, function(err, resp) {
     if (err != null) {
-      console.error(err);
-      res.status(500);
+      res.status(400);
+      res.send(err);
     } else {
       res.send(resp);
     }

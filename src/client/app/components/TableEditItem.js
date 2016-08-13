@@ -16,7 +16,7 @@ class TableEditItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: "",
+      value: this.initialEditorValue(),
       error: null,
       didEdit: false  // keep track of whether we successfully edited something
     }
@@ -55,7 +55,6 @@ class TableEditItem extends Component {
            .set('Content-Type', 'application/json')
            .end((err, resp) => {
       if (err) {
-        console.error(err, resp);
         this.setState({error: resp.body.message});
       } else {
         this.setState({error: null, didEdit: true});
@@ -82,16 +81,17 @@ class TableEditItem extends Component {
   }
 
   renderCodeArea() {
-    let initialValue = this.initialEditorValue();
     return (
       <AceEditor mode="javascript"
                  theme="github"
                  name="add-item-editor"
                  ref="editor"
+                 key={1}
                  onChange={this.onEditorChange.bind(this)}
-                 height="20em"
-                 value={initialValue}
-                 editorProps={{"$blockScrolling": true}}/>
+                 height="100%"
+                 value={this.state.value}
+                 tabSize={2}
+                 editorProps={{"$blockScrolling": true, useSoftTabs: true}}/>
       )
   }
 
@@ -128,13 +128,13 @@ class TableEditItem extends Component {
               </button>
               <h4 className="modal-title">{modeTitle} Item</h4>
             </div>
-            <div className="modal-body">
+            <div className="modal-body codearea">
               {this.renderError()}
               {this.renderCodeArea()}
               {/* TODO: add a legend for DDB types */}
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" onClick={this.close.bind(this)}>Close</button>
+              <button type="button" className="btn btn-default" onClick={this.close.bind(this)}>Close</button>
               <button type="button" className="btn btn-primary" onClick={this.save.bind(this)}>Save</button>
             </div>
           </div>

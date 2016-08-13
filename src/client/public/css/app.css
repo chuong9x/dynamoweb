@@ -5,3 +5,15 @@
 .table-title {
   margin-bottom: 15px;
 }
+
+.modal-dialog {
+  width: 800px;
+}
+
+.modal-body {
+  height: 400px;
+}
+
+.codearea {
+  padding: 0;
+}

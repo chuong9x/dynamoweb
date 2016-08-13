@@ -42,9 +42,9 @@ class TableItems extends Component {
       let headers = Object.keys(attrsToType);
       this.setState({
         'editItem': <TableEditItem mode="add"
-                                  table={this.props.table}
-                                  initialKeys={attrsToType}
-                                  onFinished={this.onEditFinished.bind(this)}/>
+                                   table={this.props.table}
+                                   initialKeys={attrsToType}
+                                   onFinished={this.onEditFinished.bind(this)}/>
       });
   }
 
@@ -78,19 +78,27 @@ class TableItems extends Component {
 
   attrsToType() {
     let attrsToType = {};
+    let seenAttrs = new Set();
+
+    // First add attr definitions
+    for (var attr of this.props.table.AttributeDefinitions) {
+      seenAttrs.add(attr.AttributeName);
+      attrsToType[attr.AttributeName] = attr.AttributeType;
+    }
+
     let items = this.state.items;
 
+    // Now add attrs from a sample of items
     let toCheck = Math.min(items.length, 10);  // Check 10 items for attrs
-    let seenAttrs = new Set();
+
     for (let i=0; i < toCheck; i++) {
       let attrs = Object.keys(items[i]);
       for (let attr of attrs) {
-        if (seenAttrs.has(attr)) {
-          continue;
+        if (!seenAttrs.has(attr)) {
+          seenAttrs.add(attr);
+          attrsToType[attr] = Object.keys(items[i][attr])[0];
         }
-        seenAttrs.add(attr);
-        attrsToType[attr] = getAttrType(this.props.table, attr)
-      };
+      }
     }
     return attrsToType;
   }
@@ -98,23 +106,23 @@ class TableItems extends Component {
   renderItem(item, headers, key) {
     return (
       <tr key={key}>
-        <td>
-          <button type="button" className="btn btn-default btn-sm"
-                  onClick={this.onEditItem.bind(this, item)}
-                  aria-label="Edit">
-            <span className="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-          </button>
-        </td>
         {headers.map((header, idx) => {
+          {/* TODO: ensure that hash key is first */}
           let attr = item[header];
           let types = Object.keys(attr);
           let value = attr[types[0]];
-          return (
-            <td key={idx}>{value}</td>
-          )
+          if (idx == 0 ) {
+            return (
+              <td key={idx}>
+                <a href="#" onClick={this.onEditItem.bind(this, item)}>{String(value)}</a>
+              </td>
+            )
+          } else {
+            return (<td key={idx}>{String(value)}</td>)
+          }
         })}
         <td>
-          <button type="button" className="btn btn-default btn-sm"
+          <button type="button" className="btn btn-danger btn-sm"
                   onClick={this.onDeleteItem.bind(this, item)}
                   aria-label="Delete">
             <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -135,7 +143,7 @@ class TableItems extends Component {
 
     return (
       <div>
-        <button className="btn btn-secondary" onClick={this.addItem.bind(this)}>
+        <button className="btn btn-primary" onClick={this.addItem.bind(this)}>
           Add Item
         </button>
         {this.state.editItem}
@@ -144,7 +152,6 @@ class TableItems extends Component {
         <table className="table table-sm">
           <thead className="thead-default">
             <tr>
-              <th></th>{/* Edit action */}
               {headers.map(header => <th key={header}>{header}</th>)}
               <th></th>{/* Delete action */}
             </tr>
