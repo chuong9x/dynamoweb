@@ -8,7 +8,6 @@ import thunk from 'redux-thunk';
 import reducer from './reducers';
 import Main from './components/Main';
 
-
 let storeFunctions = [applyMiddleware(thunk)];
 const store = compose(...storeFunctions)(createStore)(reducer);
 

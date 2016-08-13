@@ -4,12 +4,17 @@
     <title>DynamoDB Browser</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
   </head>
   <body>
     <div id="root" />
+    <script>
+    window.Tether = function () {  // Shut up bootstrap
+      throw new Error('Bootstrap needs Tether');
+    };
+    </script>
     <script src="public/bundle.js" type="text/javascript"></script>
     <script src="js/jquery-2.1.4.min.js" type="text/javascript"></script>
-    <script src="js/tether.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
   </body>
 </html>

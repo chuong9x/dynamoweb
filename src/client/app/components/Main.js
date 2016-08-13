@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Nav from './Nav';
 import Tables from './Tables';
 import TableContainer from './TableContainer'
 
@@ -11,23 +12,26 @@ function mapStateToProps(state) {
 }
 
 class Main extends React.Component {
-  
+
   render() {
     let activeTable = this.props.activeTable;
-    
+
     let tableContainer = null;
     if (activeTable) {
       tableContainer = <TableContainer key={activeTable.TableName} table={activeTable}/>
     }
-    
+
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-2">
-            <Tables/>
-          </div>
-          <div className="col-lg-10">
-            {tableContainer}
+      <div>
+        <Nav />
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-sm-3 col-md-2 sidebar">
+              <Tables/>
+            </div>
+            <div className="col-sm-9 offset-sm-3 col-md-10 offset-md-2 main">
+              {tableContainer}
+            </div>
           </div>
         </div>
       </div>

@@ -10,28 +10,28 @@ function mapStateToProps(state) {
 }
 
 class TableContainer extends Component {
-    
+
   render() {
     let table = this.props.table;
     let tableName = table.TableName;
     return (
       <div>
-        <div className="row">
+        {/*<div className="row">
           <div className="col-lg-12">
             <h2 className="table-title">{tableName}</h2>
           </div>
-        </div>
-        
+        </div>*/}
+
         <ul className="nav nav-tabs">
-          <li className="nav-item active">
-            <a className="nav-link" data-toggle="tab" href="#overview" role="tab">Overview</a>
+          <li className="nav-item">
+            <a className="nav-link active" data-toggle="tab" href="#overview" role="tab">Overview</a>
           </li>
           <li className="nav-item">
             <a className="nav-link" data-toggle="tab" href="#items" role="tab">Items</a>
           </li>
         </ul>
-        
-        <div className="tab-content">
+
+        <div className="col-lg-12 tab-content">
           <br />
           <div className="tab-pane active" id="overview" role="tabpanel">
             <TableOverview table={table}/>
@@ -41,6 +41,7 @@ class TableContainer extends Component {
           </div>
         </div>
       </div>
+
     );
   }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchTables, openTable } from '../actions'
+import { fetchTables, openTable } from '../actions';
 
 function mapStateToProps(state) {
   return {
@@ -11,27 +11,28 @@ function mapStateToProps(state) {
 }
 
 export default class Tables extends Component {
-  
+
   componentDidMount() {
     this.props.dispatch(fetchTables());
   }
-  
+
   openTable(tableName, evt) {
     this.props.dispatch(openTable(tableName));
   }
-  
+
   render() {
     let tables = this.props.tableNames.map(tableName => {
       let isActive = tableName == this.props.activeTableName;
       return (
-        <a key={tableName} href="#" 
-          className={isActive ? "list-group-item active" : "list-group-item"}
-          onClick={this.openTable.bind(this, tableName)}>{tableName}</a>
+        <li className={isActive ? "active" : ""} key={tableName}>
+          <a href="#"
+            onClick={this.openTable.bind(this, tableName)}>{tableName}</a>
+        </li>
       )
     });
-    
+
     return (
-      <ul className="list-group">
+      <ul className="nav nav-sidebar">
         {tables}
       </ul>
     );

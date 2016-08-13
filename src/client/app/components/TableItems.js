@@ -125,7 +125,7 @@ class TableItems extends Component {
           <button type="button" className="btn btn-danger btn-sm"
                   onClick={this.onDeleteItem.bind(this, item)}
                   aria-label="Delete">
-            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <i className="fa fa-times" aria-hidden="true"></i>
           </button>
         </td>
       </tr>
@@ -143,7 +143,7 @@ class TableItems extends Component {
 
     return (
       <div>
-        <button className="btn btn-primary" onClick={this.addItem.bind(this)}>
+        <button className="add-item btn btn-primary btn-sm" onClick={this.addItem.bind(this)}>
           Add Item
         </button>
         {this.state.editItem}

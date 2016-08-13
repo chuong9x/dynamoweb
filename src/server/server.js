@@ -7,11 +7,14 @@ import AWS from 'aws-sdk';
 // Default to dynalite
 var DYNALITE_URL = "http://localhost:4567";
 
+var ENDPOINT = process.env.DYNAMODB_URL || DYNALITE_URL;
+var REGION = process.env.DYNAMODB_REGION || "local";
+
 var dynamodb = new AWS.DynamoDB({
-  endpoint: process.env.DYNAMODB_URL || DYNALITE_URL,
+  endpoint: ENDPOINT,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-  region: "local",
+  region: REGION,
   httpOptions: {
     agent: new http.Agent()
   }
@@ -19,6 +22,15 @@ var dynamodb = new AWS.DynamoDB({
 
 var app = express();
 app.use(bodyParser.json());
+
+
+app.get('/api/metadata', function(req, res) {
+  res.send({
+    'endpoint': ENDPOINT,
+    'region': REGION
+  });
+});
+
 
 app.get('/api/tables', function(req, res) {
   dynamodb.listTables({}, function(err, resp) {
@@ -49,7 +61,7 @@ app.get('/api/scan/:tableName', function(req, res) {
     // TODO: this is broken, gotta fix
     params['ExclusiveStartKey'] = parseInt(req.query.exclusiveStartKey);
   }
-  
+
   dynamodb.scan(params, function(err, resp) {
     if (err) {
       console.error(err);
@@ -98,8 +110,8 @@ if (process.env.ENV == "dev") {  // webpack
   let webpackHotMiddleware = require('webpack-hot-middleware');
   let webpackDevConfig = require('../../webpack.dev.config');
   let compiler = webpack(webpackDevConfig);
-  app.use(webpackDevMiddleware(compiler, {  
-    publicPath: webpackDevConfig.output.publicPath,  
+  app.use(webpackDevMiddleware(compiler, {
+    publicPath: webpackDevConfig.output.publicPath,
     stats: {colors: true}
   }));
   app.use(webpackHotMiddleware(compiler, {
