@@ -58,9 +58,12 @@ class TableItems extends Component {
   }
 
   onEditItem(item) {
+    let attrsToType = this.attrsToType();
+    let headers = Object.keys(attrsToType);
     this.setState({
       'editItem': <TableEditItem mode="edit"
                                  item={item}
+                                 initialKeys={attrsToType}
                                  table={this.props.table}
                                  onFinished={this.onEditFinished.bind(this)}/>
     });
@@ -149,7 +152,7 @@ class TableItems extends Component {
         {this.state.editItem}
 
         <br />
-        <table className="table table-sm">
+        <table className="table table-sm table-bordered">
           <thead className="thead-default">
             <tr>
               {headers.map(header => <th key={header}>{header}</th>)}

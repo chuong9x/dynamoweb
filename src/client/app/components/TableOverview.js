@@ -28,8 +28,10 @@ class TableOverview extends Component {
           {(() => {
             if (rangeKey) {
               return (
-                {rangeKey}
-                (<span className="text-muted"> ({typeToRepr[rangeKey.AttributeType]})</span>)
+                <span>
+                  {rangeKeyAttr}
+                  <span className="text-muted"> ({typeToRepr[rangeKey.AttributeType]})</span>
+                </span>
               )
             }
             return (<span className="text-muted">None</span>)

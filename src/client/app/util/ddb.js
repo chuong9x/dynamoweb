@@ -39,3 +39,27 @@ export function getKeys(table, item) {
   }
   return result;
 }
+
+/* Returns a new object containing all of the keys in obj with the suggested
+ * ordering from orderKeys. Anything not in orderKeys is appended last in
+ * alphabetical order.
+ */
+export function orderObj(obj, orderKeys) {
+  var tempObj = {};
+  var key;
+
+  var allKeys = new Set(Object.keys(obj));
+
+  for (let key of orderKeys){
+    allKeys.delete(key);
+    tempObj[key] = obj[key];
+  }
+
+  // Add any others that might've been missing from order keys
+  let remaining = Array.from(allKeys.values()).sort();
+  for (let key of remaining) {
+    tempObj[key] = obj[key];
+  }
+
+  return tempObj;
+}

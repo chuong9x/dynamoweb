@@ -8,7 +8,7 @@ import request from 'superagent';
 import 'brace/mode/javascript';
 import 'brace/theme/github';
 
-import {typeToZeroValue} from '../util/ddb';
+import {typeToZeroValue, orderObj} from '../util/ddb';
 
 
 class TableEditItem extends Component {
@@ -22,10 +22,12 @@ class TableEditItem extends Component {
     }
   }
 
+
+  // TODO: ensure order is consistent with table headings
   initialEditorValue() {
     let initial = null;
     if (this.props.mode == "edit") {
-      initial = this.props.item;
+      initial = orderObj(this.props.item, Object.keys(this.props.initialKeys));
     } else {
       initial = {};
       for (let attr in this.props.initialKeys) {
