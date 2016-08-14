@@ -23,7 +23,6 @@ var dynamodb = new AWS.DynamoDB({
 var app = express();
 app.use(bodyParser.json());
 
-
 app.get('/api/metadata', function(req, res) {
   res.send({
     'endpoint': ENDPOINT,
@@ -119,7 +118,7 @@ if (process.env.ENV == "dev") {  // webpack
   }));
 }
 
-app.use(express.static(__dirname + '/../client/public'));  // TODO: implement this
+app.use(express.static(__dirname + '/../client/public'));
 
 app.get('/', function(req, res) {
   res.sendFile( 'client/index.html', {root: __dirname +'/../'});

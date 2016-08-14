@@ -112,9 +112,14 @@ class TableItems extends Component {
         {headers.map((header, idx) => {
           {/* TODO: ensure that hash key is first */}
           let attr = item[header];
-          let types = Object.keys(attr);
-          let value = attr[types[0]];
-          if (idx == 0 ) {
+          let value = null;
+          if (attr != undefined) {
+            let types = Object.keys(attr);
+            value = attr[types[0]];
+          } else {
+            value = "";
+          }
+          if (idx == 0) {
             return (
               <td key={idx}>
                 <a href="#" onClick={this.onEditItem.bind(this, item)}>{String(value)}</a>
@@ -124,8 +129,8 @@ class TableItems extends Component {
             return (<td key={idx}>{String(value)}</td>)
           }
         })}
-        <td>
-          <button type="button" className="btn btn-danger btn-sm"
+        <td width="35px">
+          <button type="button" className="btn btn-sm btn-outline-danger"
                   onClick={this.onDeleteItem.bind(this, item)}
                   aria-label="Delete">
             <i className="fa fa-times" aria-hidden="true"></i>
@@ -147,12 +152,12 @@ class TableItems extends Component {
     return (
       <div>
         <button className="add-item btn btn-primary btn-sm" onClick={this.addItem.bind(this)}>
-          Add Item
+          <i className="fa fa-plus" aria-hidden="true"></i> Add Item
         </button>
         {this.state.editItem}
 
         <br />
-        <table className="table table-sm table-bordered">
+        <table className="table table-sm table-bordered table-hover">
           <thead className="thead-default">
             <tr>
               {headers.map(header => <th key={header}>{header}</th>)}

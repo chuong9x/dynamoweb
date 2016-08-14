@@ -30,7 +30,6 @@ body {
   left: 0;
   z-index: 1000;
   display: block;
-  /*padding: 20px;*/
   padding: 0;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
@@ -52,6 +51,8 @@ body {
 .nav-sidebar > li {
   padding: 5px 0 5px 0;
   min-width: 100%;
+  display: table-row;
+  line-height: 35px;
 }
 
 .nav-sidebar > li > a {
@@ -78,4 +79,24 @@ body {
 
 .add-item {
   margin-bottom: 8px;
+}
+
+.table {
+  max-width: 90%;
+}
+
+td {
+  line-height: 25.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.table-bordered td, .table-bordered th {
+  border-color: #e3e4e4;
+}
+
+.table thead th {
+  border-color: #e3e4e4;
 }

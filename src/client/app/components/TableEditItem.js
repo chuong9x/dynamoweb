@@ -22,8 +22,6 @@ class TableEditItem extends Component {
     }
   }
 
-
-  // TODO: ensure order is consistent with table headings
   initialEditorValue() {
     let initial = null;
     if (this.props.mode == "edit") {
@@ -57,7 +55,11 @@ class TableEditItem extends Component {
            .set('Content-Type', 'application/json')
            .end((err, resp) => {
       if (err) {
-        this.setState({error: resp.body.message});
+        if (resp.body && resp.body.message) {
+            this.setState({error: resp.body.message});
+        } else {
+          this.setState({error: "Received HTTP " + resp.status});
+        }
       } else {
         this.setState({error: null, didEdit: true});
         this.close();
